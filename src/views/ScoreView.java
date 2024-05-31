@@ -1,20 +1,16 @@
 package views;
 
 import javax.swing.*;
-
 import models.Score;
-
 import java.awt.*;
 import java.util.List;
 
-public class ScoreView extends JFrame {
+public class ScoreView extends JPanel {
     private JTable scoreTable;
     private String[] columnNames = {"Name", "Time", "Moves"};
 
     public ScoreView(List<Score> scores) {
-        setTitle("High Scores");
-        setSize(400, 300);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
 
         Object[][] data = new Object[scores.size()][3];
         for (int i = 0; i < scores.size(); i++) {
@@ -25,9 +21,24 @@ public class ScoreView extends JFrame {
         }
 
         scoreTable = new JTable(data, columnNames);
+        scoreTable.setBackground(new Color(45, 45, 45));
+        scoreTable.setForeground(Color.WHITE);
+        scoreTable.setFont(new Font("궁서 보통", Font.BOLD, 16));
+        scoreTable.setGridColor(Color.GRAY);
         JScrollPane scrollPane = new JScrollPane(scoreTable);
         scoreTable.setFillsViewportHeight(true);
 
-        add(scrollPane, BorderLayout.CENTER);
+        JPanel panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.setColor(new Color(45, 45, 45));
+                g.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        panel.setLayout(new BorderLayout());
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        add(panel);
     }
 }

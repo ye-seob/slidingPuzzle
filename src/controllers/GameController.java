@@ -1,33 +1,26 @@
 package controllers;
 
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.CropImageFilter;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageProducer;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
 import java.io.File;
 import javax.swing.*;
-import models.Database;
-import models.PuzzleModel;
-import models.Score;
-import models.Tile;
+import models.*;
 import views.*;
 
 public class GameController {
     private PuzzleModel model;
     private GameView view;
-    private JFrame frame;
     private Timer timer;
     private int timeElapsed;
     private Database database;
-    private MainView mainView;
+    private JPanel mainPanel;
+    private CardLayout cardLayout;
 
-    public GameController(MainView mainView) {
-        this.mainView = mainView;
+    public GameController(JPanel mainPanel, CardLayout cardLayout) {
         this.database = new Database();
+        this.mainPanel = mainPanel;
+        this.cardLayout = cardLayout;
     }
 
     public void startGame(int size) {
@@ -37,19 +30,22 @@ public class GameController {
 
     public void showCustomView() {
         CustomView customView = new CustomView();
-        customView.setVisible(true);
+        mainPanel.add(customView, "CustomView");
+        cardLayout.show(mainPanel, "CustomView");
+
         customView.setUploadButtonListener(e -> uploadImage(customView));
         customView.setStartButtonListener(e -> startCustomGame(customView));
     }
 
     public void showRankings() {
         ScoreView scoreView = new ScoreView(database.getScores());
-        scoreView.setVisible(true);
+        mainPanel.add(scoreView, "ScoreView");
+        cardLayout.show(mainPanel, "ScoreView");
     }
 
     private void uploadImage(CustomView customView) {
         JFileChooser fileChooser = new JFileChooser();
-        int result = fileChooser.showOpenDialog(customView);
+        int result = fileChooser.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             ImageIcon image = new ImageIcon(file.getAbsolutePath());
@@ -60,27 +56,23 @@ public class GameController {
     private void startCustomGame(CustomView customView) {
         ImageIcon image = customView.getImage();
         if (image != null) {
-            customView.dispose();
-            setupCustomGame(image.getImage(), 3); // 기본적으로 3x3으로 시작
+            setupCustomGame(image.getImage(), 3);
+            cardLayout.show(mainPanel, "GameView");
         } else {
-            JOptionPane.showMessageDialog(customView, "Please upload an image first.");
+            JOptionPane.showMessageDialog(null, "Please upload an image first.");
         }
     }
 
     private void setupGame(int size) {
         model = new PuzzleModel(size);
         view = new GameView(size);
-        frame = new JFrame("Sliding Puzzle Game");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 500);
-
         view.setController(this);
+
         model.shuffle();
         view.updateView(model.getTiles());
 
-        frame.add(view);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        mainPanel.add(view, "GameView");
+        cardLayout.show(mainPanel, "GameView");
     }
 
     private void setupCustomGame(Image image, int size) {
@@ -96,21 +88,17 @@ public class GameController {
             Image tileImage = createImage(new FilteredImageSource(image.getSource(), new CropImageFilter(x, y, tileWidth, tileHeight)));
             tiles[i] = new Tile(i + 1, tileImage);
         }
-        tiles[size * size - 1] = new Tile(0, null); // 빈 타일
+        tiles[size * size - 1] = new Tile(0, null);
         model.setTiles(tiles);
 
         view = new GameView(size);
-        frame = new JFrame("Custom Sliding Puzzle Game");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 500);
-
         view.setController(this);
+
         model.shuffle();
         view.updateView(model.getTiles());
 
-        frame.add(view);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        mainPanel.add(view, "GameView");
+        cardLayout.show(mainPanel, "GameView");
         startTimer();
     }
 
@@ -118,7 +106,7 @@ public class GameController {
         if (model.moveTile(index)) {
             view.updateView(model.getTiles());
             if (model.isSolved()) {
-                String name = JOptionPane.showInputDialog(frame, "Congratulations! You've solved the puzzle in " + timeElapsed + " seconds! Enter your name:");
+                String name = JOptionPane.showInputDialog(null, "Congratulations! You've solved the puzzle in " + timeElapsed + " seconds! Enter your name:");
                 if (name != null && !name.isEmpty()) {
                     saveScore(new Score(name, timeElapsed, model.getSize() * model.getSize()));
                 }

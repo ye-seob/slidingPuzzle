@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class MainView extends JFrame {
+public class MainView extends JPanel {
     private final JButton easyButton = new JButton("3x3");
     private final JButton mediumButton = new JButton("4x4");
     private final JButton hardButton = new JButton("5x5");
@@ -14,10 +14,7 @@ public class MainView extends JFrame {
     private final JButton rankingButton = new JButton("Rankings");
 
     public MainView() {
-        setTitle("Sliding Puzzle Game");
-        setSize(500, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridBagLayout());
+        setLayout(new BorderLayout());
 
         JPanel backgroundPanel = new JPanel() {
             @Override
@@ -28,7 +25,7 @@ public class MainView extends JFrame {
             }
         };
         backgroundPanel.setLayout(new GridBagLayout());
-        setContentPane(backgroundPanel);
+        add(backgroundPanel, BorderLayout.CENTER);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -55,8 +52,6 @@ public class MainView extends JFrame {
 
         gbc.gridy++;
         addButtonToPanel(backgroundPanel, rankingButton, gbc);
-
-        setLocationRelativeTo(null);
     }
 
     private void addButtonToPanel(JPanel panel, JButton button, GridBagConstraints gbc) {

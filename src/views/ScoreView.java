@@ -11,7 +11,6 @@ public class ScoreView extends JPanel {
 
     public ScoreView(List<Score> scores) {
         setLayout(new BorderLayout());
-
         Object[][] data = new Object[scores.size()][3];
         for (int i = 0; i < scores.size(); i++) {
             Score score = scores.get(i);
@@ -38,7 +37,6 @@ public class ScoreView extends JPanel {
         };
         panel.setLayout(new BorderLayout());
         panel.add(scrollPane, BorderLayout.CENTER);
-
         add(panel);
     }
 }

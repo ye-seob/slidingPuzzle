@@ -6,6 +6,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="lib" path="C:/javastudy/eclipse-java-2023-12-R-win32-x86_64/eclipse/plugins/com.ibm.icu_74.2.0.jar" sourcepath="C:/javastudy/eclipse-java-2023-12-R-win32-x86_64/eclipse/plugins/com.ibm.icu_74.2.0.jar"/>
 	<classpathentry kind="lib" path="C:/javastudy/eclipse-java-2023-12-R-win32-x86_64/eclipse/plugins/jakarta.annotation-api_2.1.1.jar" sourcepath="C:/javastudy/eclipse-java-2023-12-R-win32-x86_64/eclipse/plugins/jakarta.annotation-api_2.1.1.jar"/>
 	<classpathentry kind="lib" path="C:/javastudy/eclipse-java-2023-12-R-win32-x86_64/eclipse/plugins/org.eclipse.core.commands_3.11.200.v20231108-1058.jar" sourcepath="C:/javastudy/eclipse-java-2023-12-R-win32-x86_64/eclipse/plugins/org.eclipse.core.commands_3.11.200.v20231108-1058.jar"/>

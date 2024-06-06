@@ -73,8 +73,8 @@ public class GameView extends JPanel {
                 buttons[i].setText("");
                 buttons[i].setIcon(tileIcon);
             } else {
-                buttons[i].setText(String.valueOf(tiles[i].getNumber()));
-                buttons[i].setIcon(tileIcon);
+                buttons[i].setText("");
+                buttons[i].setIcon(new ImageIcon(tiles[i].getImage())); // 타일 이미지 설정
             }
         }
     }

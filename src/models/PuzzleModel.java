@@ -7,11 +7,13 @@ public class PuzzleModel {
     private Tile[] tiles;
     private int size;
     private int emptyTileIndex;
+    private int moveCount;
 
     public PuzzleModel(int size) {
         this.size = size;
         this.tiles = new Tile[size * size];
         initializeTiles();
+        this.moveCount = 0; // 이동 횟수 초기화
     }
 
     private void initializeTiles() {
@@ -43,6 +45,7 @@ public class PuzzleModel {
                 break;
             }
         }
+        moveCount = 0; // 섞을 때 이동 횟수 초기화
     }
 
     public boolean moveTile(int index) {
@@ -51,6 +54,7 @@ public class PuzzleModel {
             tiles[emptyTileIndex] = tiles[index];
             tiles[index] = temp;
             emptyTileIndex = index;
+            moveCount++; // 이동 횟수 증가
             return true;
         }
         return false;
@@ -81,5 +85,9 @@ public class PuzzleModel {
 
     public int getSize() {
         return size;
+    }
+
+    public int getMoveCount() {
+        return moveCount;
     }
 }

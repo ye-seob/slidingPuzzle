@@ -1,16 +1,26 @@
 package views;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import models.Score;
+import controllers.GameController;
 import java.awt.*;
 import java.util.List;
+import java.awt.event.ActionListener;
+import java.net.URL;
 
 public class ScoreView extends JPanel {
     private JTable scoreTable;
     private String[] columnNames = {"Name", "Time", "Moves"};
+    private JButton backButton = new JButton("뒤로 가기");
+    private Image backgroundImage;
 
     public ScoreView(List<Score> scores) {
         setLayout(new BorderLayout());
+        loadBackgroundImage();
+        
         Object[][] data = new Object[scores.size()][3];
         for (int i = 0; i < scores.size(); i++) {
             Score score = scores.get(i);
@@ -19,24 +29,78 @@ public class ScoreView extends JPanel {
             data[i][2] = score.getMoves();
         }
 
-        scoreTable = new JTable(data, columnNames);
-        scoreTable.setBackground(new Color(45, 45, 45));
-        scoreTable.setForeground(Color.WHITE);
-        scoreTable.setFont(new Font("궁서 보통", Font.BOLD, 16));
-        scoreTable.setGridColor(Color.GRAY);
-        JScrollPane scrollPane = new JScrollPane(scoreTable);
-        scoreTable.setFillsViewportHeight(true);
+        scoreTable = new JTable(data, columnNames) {
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component c = super.prepareRenderer(renderer, row, column);
+                if (c instanceof JComponent) {
+                    ((JComponent) c).setOpaque(false);
+                }
+                return c;
+            }
+        };
+        styleTable(scoreTable);
 
-        JPanel panel = new JPanel() {
+        JScrollPane scrollPane = new JScrollPane(scoreTable);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.setColor(new Color(45, 45, 45));
+                g.setColor(new Color(45, 45, 45, 150));
                 g.fillRect(0, 0, getWidth(), getHeight());
             }
         };
-        panel.setLayout(new BorderLayout());
-        panel.add(scrollPane, BorderLayout.CENTER);
-        add(panel);
+        bottomPanel.setOpaque(false);
+        bottomPanel.add(backButton);
+
+        add(scrollPane, BorderLayout.CENTER);
+        add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+    public void setController(GameController controller) {
+        backButton.addActionListener(e -> controller.backButtonClicked()); // 뒤로 가기 버튼 이벤트 추가
+    }
+
+    private void styleTable(JTable table) {
+        table.setFont(new Font("궁서 보통", Font.BOLD, 16));
+        table.setForeground(Color.WHITE);
+        table.setBackground(new Color(0, 0, 0, 150));
+        table.setGridColor(Color.GRAY);
+        table.setShowGrid(false);
+        table.setIntercellSpacing(new Dimension(0, 0));
+
+        JTableHeader header = table.getTableHeader();
+        header.setFont(new Font("궁서 보통", Font.BOLD, 18));
+        header.setForeground(Color.WHITE);
+        header.setBackground(new Color(30, 144, 255));
+        header.setOpaque(false);
+
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        renderer.setHorizontalAlignment(SwingConstants.CENTER);
+        table.setDefaultRenderer(Object.class, renderer);
+    }
+
+    private void loadBackgroundImage() {
+        try {
+            URL imageUrl = getClass().getClassLoader().getResource("images/하늘 배경.png");
+            if (imageUrl != null) {
+                backgroundImage = new ImageIcon(imageUrl).getImage();
+            } else {
+                System.err.println("Background image not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
     }
 }

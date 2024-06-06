@@ -36,15 +36,13 @@ public class GameController {
 
         customView.setUploadButtonListener(e -> uploadImage(customView));
         customView.setStartButtonListener(e -> startCustomGame(customView));
-        //customView.setBackButtonListener(e -> backButtonClicked()); // 뒤로 가기 버튼 리스너 추가
     }
 
     public void showRankings() {
         ScoreView scoreView = new ScoreView(database.getScores());
+        scoreView.setController(this);
         mainPanel.add(scoreView, "ScoreView");
         cardLayout.show(mainPanel, "ScoreView");
-
-        //scoreView.setBackButtonListener(e -> backButtonClicked()); // 뒤로 가기 버튼 리스너 추가
     }
 
     private void uploadImage(CustomView customView) {
@@ -113,17 +111,18 @@ public class GameController {
             moveSound.start();
 
             view.updateView(model.getTiles());
+            view.updateMoveCount(model.getMoveCount()); // 이동 횟수 업데이트
             if (model.isSolved()) {
-                String name = JOptionPane.showInputDialog(null, timeElapsed + "초만에 꺴습니다 이름을 입력해주세요");
+                String name = JOptionPane.showInputDialog(null, timeElapsed + "초만에 깼습니다. 이름을 입력해주세요.");
                 if (name != null && !name.isEmpty()) {
-                    saveScore(new Score(name, timeElapsed, model.getSize() * model.getSize()));
+                    saveScore(new Score(name, timeElapsed, model.getMoveCount())); // 실제 이동 횟수를 저장합니다.
                 }
             }
         }
     }
 
     public void backButtonClicked() {
-        System.out.println("뒤로 가기 버튼이 클릭되었습니다.");
+        cardLayout.show(mainPanel, "MainView");
     }
 
     private Image createImage(ImageProducer producer) {

@@ -3,6 +3,9 @@ package views;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 
 public class MainView extends JFrame {
     private final JButton easyButton = new JButton("3x3");
@@ -11,12 +14,15 @@ public class MainView extends JFrame {
     private final JButton customButton = new JButton("Custom");
     private final JButton rankingButton = new JButton("Rankings");
     private final JPanel mainPanel = new JPanel();
-
+    private Image backgroundImage;
+    
     public MainView() {
         setTitle("슬라이딩 퍼즐");
-        setSize(1000, 800);
+        setSize(900, 800);
+        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainPanel.setLayout(new BorderLayout());
+        
         JPanel backgroundPanel = createBackgroundPanel();
         mainPanel.add(backgroundPanel, BorderLayout.CENTER);
         getContentPane().add(mainPanel);
@@ -28,18 +34,27 @@ public class MainView extends JFrame {
 
     private JPanel createBackgroundPanel() {
         JPanel backgroundPanel = new JPanel() {
+            {
+                URL imageUrl = getClass().getClassLoader().getResource("images/하늘 배경.png");
+                if (imageUrl != null) {
+                    backgroundImage = new ImageIcon(imageUrl).getImage();
+                }
+                setLayout(new GridBagLayout());
+                GridBagConstraints gbc = createGridBagConstraints();
+                addComponentsToBackgroundPanel(this, gbc);
+            }
+
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.setColor(new Color(45, 45, 45));
-                g.fillRect(0, 0, getWidth(), getHeight());
+                if (backgroundImage != null) {
+                    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+                }
             }
         };
-        backgroundPanel.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = createGridBagConstraints();
-        addComponentsToBackgroundPanel(backgroundPanel, gbc);
         return backgroundPanel;
     }
+
 
     private GridBagConstraints createGridBagConstraints() {
         GridBagConstraints gbc = new GridBagConstraints();
@@ -79,7 +94,7 @@ public class MainView extends JFrame {
 
     private void customizeButton(JButton button) {
         button.setFont(new Font("궁서 보통", Font.PLAIN, 18));
-        button.setBackground(new Color(60, 63, 65));
+        button.setBackground(new Color(30, 144, 255));
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
         button.setBorderPainted(false);

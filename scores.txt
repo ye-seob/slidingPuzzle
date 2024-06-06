@@ -6,3 +6,5 @@ asd,54,9
 asdasdsdasd,19,9
 예윤인데여,38,9
 asdasdasdasd,44,9
+aaa,31,9
+weqwe,26,9

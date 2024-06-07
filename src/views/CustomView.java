@@ -30,6 +30,8 @@ public class CustomView extends JPanel {
     public void setImage(ImageIcon image) {
         this.uploadedImage = image;
         imageLabel.setIcon(image);
+        revalidate();
+        repaint();
     }
 
     public ImageIcon getImage() {

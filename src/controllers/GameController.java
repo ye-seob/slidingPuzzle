@@ -1,13 +1,29 @@
 package controllers;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
+import java.awt.CardLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.CropImageFilter;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageProducer;
 import java.io.File;
-import javax.swing.*;
-import models.*;
-import views.*;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+import models.Database;
+import models.PuzzleModel;
+import models.Score;
+import models.Tile;
 import music.Music;
+import views.CustomView;
+import views.GameView;
+import views.ScoreView;
 
 public class GameController {
     private PuzzleModel model;
@@ -61,7 +77,7 @@ public class GameController {
             setupCustomGame(image.getImage(), 3);
             cardLayout.show(mainPanel, "GameView");
         } else {
-            JOptionPane.showMessageDialog(null, "Please upload an image first.");
+            JOptionPane.showMessageDialog(null, "사진을 먼저 업로드해주세요.");
         }
     }
 
@@ -69,10 +85,8 @@ public class GameController {
         model = new PuzzleModel(size);
         view = new GameView(size);
         view.setController(this);
-
         model.shuffle();
         view.updateView(model.getTiles());
-
         mainPanel.add(view, "GameView");
         cardLayout.show(mainPanel, "GameView");
     }
@@ -80,25 +94,23 @@ public class GameController {
     private void setupCustomGame(Image image, int size) {
         model = new PuzzleModel(size);
         Tile[] tiles = new Tile[size * size];
-
+        ImageIcon[] tileIcons = new ImageIcon[size * size - 1];
         int tileWidth = image.getWidth(null) / size;
         int tileHeight = image.getHeight(null) / size;
-
         for (int i = 0; i < size * size - 1; i++) {
             int x = (i % size) * tileWidth;
             int y = (i / size) * tileHeight;
             Image tileImage = createImage(new FilteredImageSource(image.getSource(), new CropImageFilter(x, y, tileWidth, tileHeight)));
+            tileIcons[i] = new ImageIcon(tileImage);
             tiles[i] = new Tile(i + 1, tileImage);
         }
         tiles[size * size - 1] = new Tile(0, null);
         model.setTiles(tiles);
-
         view = new GameView(size);
         view.setController(this);
-
+        view.setCustomTileIcons(tileIcons);
         model.shuffle();
         view.updateView(model.getTiles());
-
         mainPanel.add(view, "GameView");
         cardLayout.show(mainPanel, "GameView");
         startTimer();
@@ -113,7 +125,7 @@ public class GameController {
             view.updateView(model.getTiles());
             view.updateMoveCount(model.getMoveCount()); // 이동 횟수 업데이트
             if (model.isSolved()) {
-                String name = JOptionPane.showInputDialog(null, timeElapsed + "초만에 깼습니다. 이름을 입력해주세요.");
+                String name = JOptionPane.showInputDialog(null, timeElapsed + "초만에 깼습니다 이름을 입력해주세요");
                 if (name != null && !name.isEmpty()) {
                     saveScore(new Score(name, timeElapsed, model.getMoveCount())); // 실제 이동 횟수를 저장합니다.
                 }
@@ -130,7 +142,11 @@ public class GameController {
     }
 
     private void startTimer() {
+        if (timer != null) {
+            timer.stop();
+        }
         timeElapsed = 0;
+        view.updateTimer(timeElapsed);  // 타이머 초기화 시 0초를 갱신합니다.
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

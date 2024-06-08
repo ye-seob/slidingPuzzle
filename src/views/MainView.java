@@ -11,8 +11,9 @@ public class MainView extends JFrame {
     private final JButton hardButton = new JButton("5x5");
     private final JButton customButton = new JButton("Custom");
     private final JButton rankingButton = new JButton("Rankings");
-    private final JButton timeAttackButton = new JButton("Time Attack"); // 타임어택 버튼 추가
-    private final JButton moveLimitButton = new JButton("Move Limit"); // 움직임 제한 모드 버튼 추가
+    private final JButton timeAttackButton = new JButton("Time Attack");
+    private final JButton moveLimitButton = new JButton("Move Limit");
+    private final JButton impossibleButton = new JButton("Impossible Mode"); // 임파서블 모드 버튼 추가
     private final JPanel mainPanel = new JPanel();
     private Image backgroundImage;
 
@@ -78,9 +79,11 @@ public class MainView extends JFrame {
         gbc.gridy++;
         addButtonToPanel(backgroundPanel, rankingButton, gbc);
         gbc.gridy++;
-        addButtonToPanel(backgroundPanel, timeAttackButton, gbc); // 타임어택 버튼 추가
+        addButtonToPanel(backgroundPanel, timeAttackButton, gbc);
         gbc.gridy++;
-        addButtonToPanel(backgroundPanel, moveLimitButton, gbc); // 움직임 제한 모드 버튼 추가
+        addButtonToPanel(backgroundPanel, moveLimitButton, gbc);
+        gbc.gridy++;
+        addButtonToPanel(backgroundPanel, impossibleButton, gbc); // 임파서블 모드 버튼 추가
     }
 
     private JLabel createTitleLabel() {
@@ -130,5 +133,9 @@ public class MainView extends JFrame {
 
     public void setMoveLimitButtonListener(ActionListener listener) {
         moveLimitButton.addActionListener(listener); // 움직임 제한 모드 버튼 리스너 추가
+    }
+
+    public void setImpossibleButtonListener(ActionListener listener) {
+        impossibleButton.addActionListener(listener); // 임파서블 모드 버튼 리스너 추가
     }
 }

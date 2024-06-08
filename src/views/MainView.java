@@ -13,9 +13,10 @@ public class MainView extends JFrame {
     private final JButton hardButton = new JButton("5x5");
     private final JButton customButton = new JButton("Custom");
     private final JButton rankingButton = new JButton("Rankings");
+    private final JButton timeAttackButton = new JButton("Time Attack"); // 타임어택 버튼 추가
     private final JPanel mainPanel = new JPanel();
     private Image backgroundImage;
-    
+
     public MainView() {
         setTitle("슬라이딩 퍼즐");
         setSize(900, 800);
@@ -55,7 +56,6 @@ public class MainView extends JFrame {
         return backgroundPanel;
     }
 
-
     private GridBagConstraints createGridBagConstraints() {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -78,6 +78,8 @@ public class MainView extends JFrame {
         addButtonToPanel(backgroundPanel, customButton, gbc);
         gbc.gridy++;
         addButtonToPanel(backgroundPanel, rankingButton, gbc);
+        gbc.gridy++;
+        addButtonToPanel(backgroundPanel, timeAttackButton, gbc); // 타임어택 버튼 추가
     }
 
     private JLabel createTitleLabel() {
@@ -119,5 +121,9 @@ public class MainView extends JFrame {
 
     public void setRankingButtonListener(ActionListener listener) {
         rankingButton.addActionListener(listener);
+    }
+
+    public void setTimeAttackButtonListener(ActionListener listener) {
+        timeAttackButton.addActionListener(listener); // 타임어택 버튼 리스너 추가
     }
 }

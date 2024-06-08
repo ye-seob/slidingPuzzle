@@ -29,6 +29,7 @@ public class Main {
             mainView.setCustomButtonListener(e -> customController.showCustomView());
             mainView.setRankingButtonListener(e -> scoreController.showRankings());
             mainView.setTimeAttackButtonListener(e -> gameController.startTimeAttackGame(3)); // 타임어택 모드 리스너 추가
+            mainView.setMoveLimitButtonListener(e -> gameController.startMoveLimitGame(3)); // 움직임 제한 모드 리스너 추가
 
             mainView.getContentPane().add(mainPanel);
             mainView.setLocationRelativeTo(null);

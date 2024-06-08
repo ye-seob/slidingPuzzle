@@ -12,6 +12,7 @@ public class MainView extends JFrame {
     private final JButton customButton = new JButton("Custom");
     private final JButton rankingButton = new JButton("Rankings");
     private final JButton timeAttackButton = new JButton("Time Attack"); // 타임어택 버튼 추가
+    private final JButton moveLimitButton = new JButton("Move Limit"); // 움직임 제한 모드 버튼 추가
     private final JPanel mainPanel = new JPanel();
     private Image backgroundImage;
 
@@ -78,6 +79,8 @@ public class MainView extends JFrame {
         addButtonToPanel(backgroundPanel, rankingButton, gbc);
         gbc.gridy++;
         addButtonToPanel(backgroundPanel, timeAttackButton, gbc); // 타임어택 버튼 추가
+        gbc.gridy++;
+        addButtonToPanel(backgroundPanel, moveLimitButton, gbc); // 움직임 제한 모드 버튼 추가
     }
 
     private JLabel createTitleLabel() {
@@ -123,5 +126,9 @@ public class MainView extends JFrame {
 
     public void setTimeAttackButtonListener(ActionListener listener) {
         timeAttackButton.addActionListener(listener); // 타임어택 버튼 리스너 추가
+    }
+
+    public void setMoveLimitButtonListener(ActionListener listener) {
+        moveLimitButton.addActionListener(listener); // 움직임 제한 모드 버튼 리스너 추가
     }
 }

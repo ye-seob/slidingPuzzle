@@ -23,9 +23,11 @@ public class GameController {
     private GameView view;
     private Timer timer;
     private int timeElapsed;
+    private int moveLimit;
     private JPanel mainPanel;
     private CardLayout cardLayout;
     private boolean isTimeAttackMode;
+    private boolean isMoveLimitMode;
     private ScoreController scoreController;
 
     public GameController(JPanel mainPanel, CardLayout cardLayout, ScoreController scoreController) {
@@ -36,14 +38,23 @@ public class GameController {
 
     public void startGame(int size) {
         isTimeAttackMode = false;
+        isMoveLimitMode = false;
         setupGame(size);
         startTimer();
     }
 
     public void startTimeAttackGame(int size) {
         isTimeAttackMode = true;
+        isMoveLimitMode = false;
         setupGame(size);
         startTimeAttackTimer();
+    }
+
+    public void startMoveLimitGame(int size) {
+        isMoveLimitMode = true;
+        isTimeAttackMode = false;
+        moveLimit = 30;
+        setupGame(size);
     }
 
     public void tileClicked(int index) {
@@ -54,10 +65,22 @@ public class GameController {
 
             view.updateView(model.getTiles());
             view.updateMoveCount(model.getMoveCount()); // 이동 횟수 업데이트
+
+            if (isMoveLimitMode) {
+                moveLimit--;
+                if (moveLimit <= 0) {
+                    JOptionPane.showMessageDialog(null, "이동 제한을 초과했습니다!");
+                    cardLayout.show(mainPanel, "MainView");
+                    return;
+                }
+            }
+
             if (model.isSolved()) {
                 if (isTimeAttackMode) {
                     timer.stop();
                     JOptionPane.showMessageDialog(null, "축하합니다!");
+                } else if (isMoveLimitMode) {
+                    JOptionPane.showMessageDialog(null, "축하합니다! 퍼즐을 맞췄습니다.");
                 } else {
                     String name = JOptionPane.showInputDialog(null, timeElapsed + "초만에 깼습니다 이름을 입력해주세요");
                     if (name != null && !name.isEmpty()) {

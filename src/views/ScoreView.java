@@ -1,21 +1,36 @@
 package views;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.net.URL;
+import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
+
+import controllers.ScoreController;
 import models.Score;
-import controllers.GameController;
-import java.awt.*;
-import java.util.List;
-import java.awt.event.ActionListener;
-import java.net.URL;
 
 public class ScoreView extends JPanel {
     private JTable scoreTable;
     private String[] columnNames = {"Name", "Time", "Moves"};
     private JButton backButton = new JButton("뒤로 가기");
     private Image backgroundImage;
+    private ScoreController controller;
 
     public ScoreView(List<Score> scores) {
         setLayout(new BorderLayout());
@@ -58,10 +73,12 @@ public class ScoreView extends JPanel {
 
         add(scrollPane, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
+
+        backButton.addActionListener(e -> controller.backButtonClicked());
     }
 
-    public void setController(GameController controller) {
-        backButton.addActionListener(e -> controller.backButtonClicked()); // 뒤로 가기 버튼 이벤트 추가
+    public void setController(ScoreController controller) {
+        this.controller = controller;
     }
 
     private void styleTable(JTable table) {

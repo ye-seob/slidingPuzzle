@@ -8,37 +8,30 @@ import java.awt.event.ActionListener;
 import java.awt.image.CropImageFilter;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageProducer;
-import java.io.File;
-
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import javax.swing.JOptionPane;
 
-import models.Database;
 import models.PuzzleModel;
-import models.Score;
 import models.Tile;
 import music.Music;
-import views.CustomView;
 import views.GameView;
-import views.ScoreView;
 
 public class GameController {
     private PuzzleModel model;
     private GameView view;
     private Timer timer;
     private int timeElapsed;
-    private Database database;
     private JPanel mainPanel;
     private CardLayout cardLayout;
     private boolean isTimeAttackMode;
+    private ScoreController scoreController;
 
-    public GameController(JPanel mainPanel, CardLayout cardLayout) {
-        this.database = new Database();
+    public GameController(JPanel mainPanel, CardLayout cardLayout, ScoreController scoreController) {
         this.mainPanel = mainPanel;
         this.cardLayout = cardLayout;
+        this.scoreController = scoreController;
     }
 
     public void startGame(int size) {
@@ -53,53 +46,33 @@ public class GameController {
         startTimeAttackTimer();
     }
 
-    public void showCustomView() {
-        CustomView customView = new CustomView();
-        mainPanel.add(customView, "CustomView");
-        cardLayout.show(mainPanel, "CustomView");
+    public void tileClicked(int index) {
+        if (model.moveTile(index)) {
+            // 효과음 재생
+            Music moveSound = new Music("resources/music/move.mp3", false);
+            moveSound.start();
 
-        customView.setUploadButtonListener(e -> uploadImage(customView));
-        customView.setStartButtonListener(e -> startCustomGame(customView));
-    }
-
-    public void showRankings() {
-        ScoreView scoreView = new ScoreView(database.getScores());
-        scoreView.setController(this);
-        mainPanel.add(scoreView, "ScoreView");
-        cardLayout.show(mainPanel, "ScoreView");
-    }
-
-    private void uploadImage(CustomView customView) {
-        JFileChooser fileChooser = new JFileChooser();
-        int result = fileChooser.showOpenDialog(null);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            ImageIcon image = new ImageIcon(file.getAbsolutePath());
-            customView.setImage(image);
+            view.updateView(model.getTiles());
+            view.updateMoveCount(model.getMoveCount()); // 이동 횟수 업데이트
+            if (model.isSolved()) {
+                if (isTimeAttackMode) {
+                    timer.stop();
+                    JOptionPane.showMessageDialog(null, "축하합니다!");
+                } else {
+                    String name = JOptionPane.showInputDialog(null, timeElapsed + "초만에 깼습니다 이름을 입력해주세요");
+                    if (name != null && !name.isEmpty()) {
+                        scoreController.saveScore(name, timeElapsed, model.getMoveCount());
+                    }
+                }
+            }
         }
     }
 
-    private void startCustomGame(CustomView customView) {
-        ImageIcon image = customView.getImage();
-        if (image != null) {
-            setupCustomGame(image.getImage(), 3);
-            cardLayout.show(mainPanel, "GameView");
-        } else {
-            JOptionPane.showMessageDialog(null, "사진을 먼저 업로드해주세요.");
-        }
+    public void backButtonClicked() {
+        cardLayout.show(mainPanel, "MainView");
     }
 
-    private void setupGame(int size) {
-        model = new PuzzleModel(size);
-        view = new GameView(size);
-        view.setController(this);
-        model.shuffle();
-        view.updateView(model.getTiles());
-        mainPanel.add(view, "GameView");
-        cardLayout.show(mainPanel, "GameView");
-    }
-
-    private void setupCustomGame(Image image, int size) {
+    public void setupCustomGame(Image image, int size) {
         model = new PuzzleModel(size);
         Tile[] tiles = new Tile[size * size];
         ImageIcon[] tileIcons = new ImageIcon[size * size - 1];
@@ -124,34 +97,14 @@ public class GameController {
         startTimer();
     }
 
-    public void tileClicked(int index) {
-        if (model.moveTile(index)) {
-            // 효과음 재생
-            Music moveSound = new Music("resources/music/move.mp3", false);
-            moveSound.start();
-
-            view.updateView(model.getTiles());
-            view.updateMoveCount(model.getMoveCount()); // 이동 횟수 업데이트
-            if (model.isSolved()) {
-                if (isTimeAttackMode) {
-                    timer.stop();
-                    JOptionPane.showMessageDialog(null, "축하합니다!");
-                } else {
-                    String name = JOptionPane.showInputDialog(null, timeElapsed + "초만에 깼습니다 이름을 입력해주세요");
-                    if (name != null && !name.isEmpty()) {
-                        saveScore(new Score(name, timeElapsed, model.getMoveCount())); // 실제 이동 횟수를 저장합니다.
-                    }
-                }
-            }
-        }
-    }
-
-    public void backButtonClicked() {
-        cardLayout.show(mainPanel, "MainView");
-    }
-
-    private Image createImage(ImageProducer producer) {
-        return Toolkit.getDefaultToolkit().createImage(producer);
+    private void setupGame(int size) {
+        model = new PuzzleModel(size);
+        view = new GameView(size);
+        view.setController(this);
+        model.shuffle();
+        view.updateView(model.getTiles());
+        mainPanel.add(view, "GameView");
+        cardLayout.show(mainPanel, "GameView");
     }
 
     private void startTimer() {
@@ -190,7 +143,7 @@ public class GameController {
         timer.start();
     }
 
-    private void saveScore(Score score) {
-        database.addScore(score);
+    private Image createImage(ImageProducer producer) {
+        return Toolkit.getDefaultToolkit().createImage(producer);
     }
 }

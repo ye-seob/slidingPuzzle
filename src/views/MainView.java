@@ -3,8 +3,6 @@ package views;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.net.URL;
 
 public class MainView extends JFrame {

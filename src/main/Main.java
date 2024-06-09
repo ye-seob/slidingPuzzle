@@ -4,6 +4,10 @@ import views.MainView;
 import controllers.GameController;
 import controllers.CustomController;
 import controllers.ScoreController;
+import controllers.NormalModeController;
+import controllers.TimeAttackModeController;
+import controllers.MoveLimitModeController;
+import controllers.ImpossibleModeController;
 import music.Music;
 
 import javax.swing.*;
@@ -20,17 +24,20 @@ public class Main {
             mainPanel.add(mainView.getMainPanel(), "MainView");
 
             ScoreController scoreController = new ScoreController(mainPanel, cardLayout);
-            GameController gameController = new GameController(mainPanel, cardLayout, scoreController);
-            CustomController customController = new CustomController(mainPanel, cardLayout, gameController);
+            GameController normalModeController = new NormalModeController(mainPanel, cardLayout, scoreController);
+            GameController timeAttackModeController = new TimeAttackModeController(mainPanel, cardLayout, scoreController);
+            GameController moveLimitModeController = new MoveLimitModeController(mainPanel, cardLayout, scoreController);
+            GameController impossibleModeController = new ImpossibleModeController(mainPanel, cardLayout, scoreController);
+            CustomController customController = new CustomController(mainPanel, cardLayout, normalModeController);
 
-            mainView.setEasyButtonListener(e -> gameController.startGame(3));
-            mainView.setMediumButtonListener(e -> gameController.startGame(4));
-            mainView.setHardButtonListener(e -> gameController.startGame(5));
+            mainView.setEasyButtonListener(e -> normalModeController.startGame(3));
+            mainView.setMediumButtonListener(e -> normalModeController.startGame(4));
+            mainView.setHardButtonListener(e -> normalModeController.startGame(5));
             mainView.setCustomButtonListener(e -> customController.showCustomView());
             mainView.setRankingButtonListener(e -> scoreController.showRankings());
-            mainView.setTimeAttackButtonListener(e -> gameController.startTimeAttackGame(3)); // 타임어택 모드 리스너 추가
-            mainView.setMoveLimitButtonListener(e -> gameController.startMoveLimitGame(3)); // 움직임 제한 모드 리스너 추가
-            mainView.setImpossibleButtonListener(e -> gameController.startImpossibleGame(3)); // 임파서블 모드 리스너 추가
+            mainView.setTimeAttackButtonListener(e -> timeAttackModeController.startGame(3)); // 타임어택 모드 리스너 추가
+            mainView.setMoveLimitButtonListener(e -> moveLimitModeController.startGame(3)); // 움직임 제한 모드 리스너 추가
+            mainView.setImpossibleButtonListener(e -> impossibleModeController.startGame(3)); // 임파서블 모드 리스너 추가
 
             mainView.getContentPane().add(mainPanel);
             mainView.setLocationRelativeTo(null);

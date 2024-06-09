@@ -18,20 +18,17 @@ import models.Tile;
 import music.Music;
 import views.GameView;
 
-public class GameController {
-    private PuzzleModel model;
-    private GameView view;
-    private Timer timer;
-    private Timer shuffleTimer;
-    private int timeElapsed;
-    private int shuffleTimeRemaining;
-    private int moveLimit;
-    private JPanel mainPanel;
-    private CardLayout cardLayout;
-    private boolean isTimeAttackMode;
-    private boolean isMoveLimitMode;
-    private boolean isImpossibleMode;
-    private ScoreController scoreController;
+public abstract class GameController {
+    protected PuzzleModel model;
+    protected GameView view;
+    protected Timer timer;
+    protected Timer shuffleTimer;
+    protected int timeElapsed;
+    protected int shuffleTimeRemaining;
+    protected int moveLimit;
+    protected JPanel mainPanel;
+    protected CardLayout cardLayout;
+    protected ScoreController scoreController;
 
     public GameController(JPanel mainPanel, CardLayout cardLayout, ScoreController scoreController) {
         this.mainPanel = mainPanel;
@@ -39,82 +36,32 @@ public class GameController {
         this.scoreController = scoreController;
     }
 
-    public void startGame(int size) {
-        stopTimers();
-        isTimeAttackMode = false;
-        isMoveLimitMode = false;
-        isImpossibleMode = false;
-        setupGame(size);
-        startTimer();
-    }
-
-    public void startTimeAttackGame(int size) {
-        stopTimers();
-        isTimeAttackMode = true;
-        isMoveLimitMode = false;
-        isImpossibleMode = false;
-        setupGame(size);
-        startTimeAttackTimer();
-    }
-
-    public void startMoveLimitGame(int size) {
-        stopTimers();
-        isMoveLimitMode = true;
-        isTimeAttackMode = false;
-        isImpossibleMode = false;
-        moveLimit = 30;
-        setupGame(size);
-        view.setMoveLimitMode(true);
-        updateMoveLimit();
-    }
-
-    public void startImpossibleGame(int size) {
-        stopTimers();
-        isImpossibleMode = true;
-        isTimeAttackMode = false;
-        isMoveLimitMode = false;
-        shuffleTimeRemaining = 100;
-        setupGame(size);
-        view.setImpossibleMode(true);
-        startShuffleTimer();
-    }
+    public abstract void startGame(int size);
 
     public void tileClicked(int index) {
         if (model.moveTile(index)) {
-            // 효과음 재생
             Music moveSound = new Music("resources/music/move.mp3", false);
             moveSound.start();
-
             view.updateView(model.getTiles());
-            view.updateMoveCount(model.getMoveCount()); // 이동 횟수 업데이트
+            view.updateMoveCount(model.getMoveCount());
 
-            if (isMoveLimitMode) {
-                moveLimit--;
-                view.updateMoveCount(moveLimit); // 남은 이동 횟수 업데이트
-                if (moveLimit <= 0) {
-                    JOptionPane.showMessageDialog(null, "이동 제한을 초과했습니다!");
-                    cardLayout.show(mainPanel, "MainView");
-                    return;
-                }
-            }
+            handleTileClick();
 
             if (model.isSolved()) {
-                if (isTimeAttackMode) {
-                    timer.stop();
-                    JOptionPane.showMessageDialog(null, "축하합니다!");
-                } else if (isMoveLimitMode) {
-                    JOptionPane.showMessageDialog(null, "축하합니다! 퍼즐을 맞췄습니다.");
-                } else if (isImpossibleMode) {
-                    shuffleTimer.stop();
-                    JOptionPane.showMessageDialog(null, "축하합니다! 퍼즐을 맞췄습니다. 성적은 저장되지 않습니다.");
-                } else {
-                    String name = JOptionPane.showInputDialog(null, timeElapsed + "초만에 깼습니다 이름을 입력해주세요");
-                    if (name != null && !name.isEmpty()) {
-                        scoreController.saveScore(name, timeElapsed, model.getMoveCount());
-                    }
-                }
+                onPuzzleSolved();
             }
         }
+    }
+
+    protected abstract void handleTileClick();
+
+    protected void onPuzzleSolved() {
+        String name = JOptionPane.showInputDialog(null, timeElapsed + "초만에 깼습니다 이름을 입력해주세요");
+        if (name != null && !name.isEmpty()) {
+            scoreController.saveScore(name, timeElapsed, model.getMoveCount());
+        }
+        JOptionPane.showMessageDialog(null, "축하합니다!");
+        cardLayout.show(mainPanel, "MainView");
     }
 
     public void backButtonClicked() {
@@ -148,22 +95,20 @@ public class GameController {
         startTimer();
     }
 
-    private void setupGame(int size) {
+    protected void setupGame(int size) {
         stopTimers();
         model = new PuzzleModel(size);
         view = new GameView(size);
         view.setController(this);
-        view.setImpossibleMode(isImpossibleMode);
-        view.setMoveLimitMode(isMoveLimitMode);
         model.shuffle();
         view.updateView(model.getTiles());
         mainPanel.add(view, "GameView");
         cardLayout.show(mainPanel, "GameView");
     }
 
-    private void startTimer() {
+    protected void startTimer() {
         timeElapsed = 0;
-        view.updateTimer(timeElapsed);  // 타이머 초기화 시 0초를 갱신합니다.
+        view.updateTimer(timeElapsed);
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -174,8 +119,8 @@ public class GameController {
         timer.start();
     }
 
-    private void startTimeAttackTimer() {
-        timeElapsed = 60; // 타임어택 모드는 60초부터 시작합니다.
+    protected void startTimeAttackTimer() {
+        timeElapsed = 60;
         view.updateTimer(timeElapsed);
         timer = new Timer(1000, new ActionListener() {
             @Override
@@ -185,13 +130,14 @@ public class GameController {
                 if (timeElapsed <= 0) {
                     timer.stop();
                     JOptionPane.showMessageDialog(null, "시간이 종료되었습니다!");
+                    cardLayout.show(mainPanel, "MainView");
                 }
             }
         });
         timer.start();
     }
 
-    private void startShuffleTimer() {
+    protected void startShuffleTimer() {
         shuffleTimeRemaining = 100;
         view.updateShuffleTimer(shuffleTimeRemaining);
         shuffleTimer = new Timer(1000, new ActionListener() {
@@ -209,7 +155,7 @@ public class GameController {
         shuffleTimer.start();
     }
 
-    private void stopTimers() {
+    protected void stopTimers() {
         if (timer != null) {
             timer.stop();
         }
@@ -218,11 +164,11 @@ public class GameController {
         }
     }
 
-    private Image createImage(ImageProducer producer) {
+    protected Image createImage(ImageProducer producer) {
         return Toolkit.getDefaultToolkit().createImage(producer);
     }
 
-    private void updateMoveLimit() {
+    protected void updateMoveLimit() {
         view.updateMoveCount(moveLimit);
     }
 }

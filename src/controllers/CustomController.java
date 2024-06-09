@@ -1,12 +1,14 @@
 package controllers;
 
-import views.CustomView;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.CardLayout;
 import java.io.File;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import views.CustomView;
 
 public class CustomController {
     private JPanel mainPanel;

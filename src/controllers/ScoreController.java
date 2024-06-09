@@ -3,6 +3,7 @@ package controllers;
 import views.ScoreView;
 import models.Database;
 import models.Score;
+
 import javax.swing.JPanel;
 import java.awt.CardLayout;
 import java.util.List;

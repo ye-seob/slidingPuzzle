@@ -18,7 +18,7 @@ public class TimeAttackModeController extends GameController {
 
     @Override
     protected void handleTileClick() {
-        // Time Attack mode doesn't have any specific tile click logic.
+       
     }
 
     @Override

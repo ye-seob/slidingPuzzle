@@ -1,17 +1,9 @@
 package controllers;
 
-import java.awt.CardLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.CropImageFilter;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageProducer;
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
-import javax.swing.Timer;
-import javax.swing.JOptionPane;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
+import javax.swing.*;
 
 import models.PuzzleModel;
 import models.Tile;
@@ -56,10 +48,13 @@ public abstract class GameController {
     protected abstract void handleTileClick();
 
     protected void onPuzzleSolved() {
+    	Music successSound = new Music("resources/music/완성.mp3", false);
+    	successSound.start();
         String name = JOptionPane.showInputDialog(null, timeElapsed + "초만에 깼습니다 이름을 입력해주세요");
         if (name != null && !name.isEmpty()) {
             scoreController.saveScore(name, timeElapsed, model.getMoveCount());
         }
+        
         JOptionPane.showMessageDialog(null, "축하합니다!");
         cardLayout.show(mainPanel, "MainView");
     }

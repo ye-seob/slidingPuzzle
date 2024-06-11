@@ -1,28 +1,24 @@
-package controllers;
+package controllers; // 패키지 controllers 선언
 
-import javax.swing.JPanel;
-import java.awt.CardLayout;
+import javax.swing.JPanel; // Swing JPanel import
+import java.awt.CardLayout; // AWT CardLayout import
 
 public class NormalModeController extends GameController {
 
     public NormalModeController(JPanel mainPanel, CardLayout cardLayout, ScoreController scoreController) {
-        super(mainPanel, cardLayout, scoreController);
+        super(mainPanel, cardLayout, scoreController); 
     }
 
-    @Override
-    public void startGame(int size) {
-        setupGame(size);
-        startTimer();
+    public void startGame(int size) { 
+        setupGame(size); 
+        startTimer(); 
     }
 
-    @Override
-    protected void handleTileClick() {
-        // Normal mode doesn't have any specific tile click logic.
+    protected void tileClickEvent() { 
     }
 
-    @Override
-    protected void onPuzzleSolved() {
-        timer.stop();
-        super.onPuzzleSolved();
+    protected void finishingGame() { 
+        timer.stop(); 
+        super.finishingGame(); 
     }
 }

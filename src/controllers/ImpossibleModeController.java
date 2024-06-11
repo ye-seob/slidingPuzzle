@@ -1,31 +1,25 @@
-package controllers;
+package controllers; 
 
-import javax.swing.JPanel;
-import java.awt.CardLayout;
-import javax.swing.JOptionPane;
+import javax.swing.*;
+import java.awt.*;
 
-public class ImpossibleModeController extends GameController {
+public class ImpossibleModeController extends GameController { 
 
     public ImpossibleModeController(JPanel mainPanel, CardLayout cardLayout, ScoreController scoreController) {
-        super(mainPanel, cardLayout, scoreController);
+        super(mainPanel, cardLayout, scoreController); 
     }
 
-    @Override
-    public void startGame(int size) {
-        setupGame(size);
+    public void startGame(int size) { 
+        setupGame(size); 
         view.setImpossibleMode(true);
-        startShuffleTimer();
+        startInitTimer(); 
     }
 
-    @Override
-    protected void handleTileClick() {
-        // Impossible mode doesn't have any specific tile click logic.
-    }
+    protected void tileClickEvent() {}
 
-    @Override
-    protected void onPuzzleSolved() {
-        shuffleTimer.stop();
-        JOptionPane.showMessageDialog(null, "축하합니다! 퍼즐을 맞췄습니다. 성적은 저장되지 않습니다.");
+    protected void finishingGame() {
+        initTimer.stop(); 
+        JOptionPane.showMessageDialog(null, "축하합니다"); 
         cardLayout.show(mainPanel, "MainView");
     }
 }

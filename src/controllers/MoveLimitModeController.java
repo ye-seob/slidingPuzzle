@@ -12,10 +12,9 @@ public class MoveLimitModeController extends GameController {
 
     public void startGame(int size) { 
         moveLimit = 50; 
-        setupGame(size); 
+        setupGame(null,size); 
         view.setMoveLimitMode(true);
         view.updateMoveCount(moveLimit); 
-        startTimer(); 
     }
 
     protected void tileClickEvent() { 

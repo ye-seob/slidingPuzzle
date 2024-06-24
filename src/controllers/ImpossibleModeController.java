@@ -10,7 +10,7 @@ public class ImpossibleModeController extends GameController {
     }
 
     public void startGame(int size) { 
-        setupGame(size); 
+        setupGame(null,size); 
         view.setImpossibleMode(true);
         startInitTimer(); 
     }

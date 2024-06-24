@@ -4,8 +4,8 @@ import views.ScoreView;
 import models.Database;
 import models.Score; 
 
-import javax.swing.JPanel; // Swing JPanel import
-import java.awt.CardLayout; // AWT CardLayout import
+import javax.swing.JPanel; 
+import java.awt.CardLayout; 
 
 public class ScoreController { 
     private Database database; 
@@ -31,6 +31,6 @@ public class ScoreController {
 
     public void saveScore(String name, int time, int moves) { 
         Score score = new Score(name, time, moves);
-        database.addScore(score);
+        database.saveScore(score);
     }
 }

@@ -1,25 +1,25 @@
-package models; // 패키지 models 선언
+package models; 
 
-import java.awt.Image; // AWT Image import
+import java.awt.Image; 
 
-public class Tile { // Tile 클래스 선언
-    private int number; // 숫자 변수 선언
-    private Image image; // 이미지 변수 선언
+public class Tile {
+    private int number;
+    private Image image;
 
-    public Tile(int number, Image image) { // 생성자 정의
-        this.number = number; // 숫자 설정
-        this.image = image; // 이미지 설정
+    public Tile(int number, Image image) { 
+        this.number = number; 
+        this.image = image; 
     }
 
-    public int getNumber() { // 숫자 반환 메서드 정의
-        return number; // 숫자 반환
+    public int getNumber() { 
+        return number;
     }
 
-    public Image getImage() { // 이미지 반환 메서드 정의
-        return image; // 이미지 반환
+    public Image getImage() { 
+        return image;
     }
 
-    public void setImage(Image image) { // 이미지 설정 메서드 정의
-        this.image = image; // 이미지 설정
+    public void setImage(Image image) {
+        this.image = image; 
     }
 }
